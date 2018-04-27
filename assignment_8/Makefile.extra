@@ -1,0 +1,41 @@
+all: App runtest analyse plot report
+############
+App:app.ex1
+app.ex1:thread_function.o prog.o
+	gcc -o $@ thread_function.o prog.o #-pthreads
+prog.o:prog.c common.h
+	gcc -I. -c $< -o $@
+thread_function.o : thread_function.c common.h
+	gcc -I. -c $< -o $@
+############
+runtest : output.log
+output.log:app.ex1 threads.txt params.txt pre.py
+	python pre.py
+############
+analyse:data_line.txt
+data_line.txt:output.log process.py
+	python process.py
+############
+plot : scat1.eps speedup.eps line.eps
+scat1.eps: scatter.p data_line.txt
+	gnuplot -e "input='d_scat1.txt'; outp='scat1.eps'" scatter.p && \
+	gnuplot -e "input='d_scat2.txt'; outp='scat2.eps'" scatter.p && \
+	gnuplot -e "input='d_scat4.txt'; outp='scat4.eps'" scatter.p && \
+	gnuplot -e "input='d_scat8.txt'; outp='scat8.eps'" scatter.p && \
+	gnuplot -e "input='d_scat16.txt'; outp='scat16.eps'" scatter.p
+line.eps: line.p data_line.txt
+	gnuplot line.p
+speedup.eps: speedup.p data_line.txt
+	gnuplot speedup.p
+###########
+report: latex.log
+latex.log: latex.tex scat1.eps line.eps speedup.eps
+	rm -f *.pdf latex.log latex.aux latex.dvi && pdflatex latex.tex
+###########
+.Phony :all App runtest analyse plot report cleam cplt cpdf
+clean:
+	rm -f *.o app.ex1 *.log data_line.txt d_scat?.txt d_scat??.txt *.pdf *.eps latex.log latex.aux latex.dvi
+cplt:
+	rm -f *.eps
+cpdf:
+	rm -f *.pdf latex.log latex.aux latex.dvi

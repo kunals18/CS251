@@ -1,0 +1,11 @@
+all:final
+
+final:prog.o thread_function.o
+	gcc -o final prog.o thread_function.o
+prog.o:prog.c common.h
+	gcc -lm -pthread -c prog.c -o prog.o
+thread_function.o:thread_function.c common.h
+	gcc -lm -pthread -c thread_function.c -o thread_function.o
+
+clean:
+	rm -f *.o final

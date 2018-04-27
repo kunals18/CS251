@@ -1,0 +1,38 @@
+a
+function work(){
+	while read i
+	do
+		echo "Just echoing for the sake $i"
+		if [[ -d $i ]];then
+			work $new_content $tab $new_command
+		else
+			a = a + awk -f trial1.awk qn.c | cut -f1 -d " "
+			function work(){
+	while read i
+	do
+		echo "Just echoing for the sake $i"
+		if [[ -d $i ]];then
+			j=1
+			while [ $j -le $2 ] ;do
+				echo -en "\t"
+				j=$((j+1))
+			done
+			echo -n $i
+			new_command="$3 /$i"
+			new_content=`$new_content`
+			tab=$[$2+1]
+			echo "check $tab"
+			work $new_content $tab $new_command
+		else
+			j=1
+			while [ $j -le $2 ] ;do
+				echo -en "\t"
+				j=$((j+1))
+			done
+			echo -n $i
+		fi
+	done < <(ls $1)
+}
+		fi
+	done < <(ls $1)
+}
